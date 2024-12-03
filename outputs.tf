@@ -10,3 +10,9 @@
 #   depends_on = [module.azure_public_ip_1, module.azure_public_ip_2]
 #   sensitive = true
 # }
+output "public_ip_vm_1" {
+  value = module.azure_public_ip_1.public_ip
+}
+output "public_ip_vm_2" {
+  value = module.azure_public_ip_2.public_ip
+}
