@@ -172,9 +172,8 @@ pipeline {
                               echo "Cloning kubespray repository..."
                               sudo apt update
                               sudo apt install -y git python3 python3-pip
-                              cd ~
-                              git clone https://github.com/kubernetes-sigs/kubespray.git
-                              cp -r ~/kubespray/inventory/sample ~/kubespray/inventory/mycluster
+                              git clone https://github.com/kubernetes-sigs/kubespray.git ~
+                              cp -r ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
@@ -200,7 +199,7 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
                               " > ~/kubespray/inventory/mycluster/inventory.ini
 
                         else
-                              cp -r ~/kubespray/inventory/sample ~/kubespray/inventory/mycluster
+                              cp -r  ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
