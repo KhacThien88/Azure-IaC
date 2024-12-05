@@ -159,34 +159,54 @@ pipeline {
     //   }
     // }
     
-//     stage('Install Tools') {
-//     steps {
-//         script {
-//             remote.user = 'root'
-//             remote.password = '111111aA'
-//         }
-//         sshCommand(remote: remote, command: """
-//             if ! command -v terraform &> /dev/null
-//             then
-//                 echo "Terraform not found, installing..."
-//                 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-//                 wget -O- https://apt.releases.hashicorp.com/gpg | \
-//                 gpg --dearmor | \
-//                 sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-//                 gpg --no-default-keyring \
-//                 --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-//                 --fingerprint
-//                 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-//                 https://apt.releases.hashicorp.com \$(lsb_release -cs) main" | \
-//                 sudo tee /etc/apt/sources.list.d/hashicorp.list
-//                 sudo apt update
-//                 sudo apt-get install terraform
-//             else
-//                 echo "Terraform is already installed"
-//             fi 
-//         """)
-//     }
-// }
+    stage('Install Tools') {
+    steps {
+        script {
+            vm1.user = 'adminuser'
+            vm1.password = '111111aA@'
+            vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
+            vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+        }
+        sshCommand(remote: remote, command: """
+                        if [ ! -d ~/kubespray ]; then
+                              echo "Cloning kubespray repository..."
+                              sudo apt update
+                              sudo apt install -y git python3 python3-pip
+                              cd ~
+                              git clone https://github.com/kubernetes-sigs/kubespray.git
+                              cd kubespray
+                              pip3 install -r requirements.txt
+                              cp -r inventory/sample inventory/mycluster
+                              echo "
+# This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
+# and 3 worker nodes
+# See https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html
+# for tips on building your # inventory
+
+# Configure 'ip' variable to bind kubernetes services on a different ip than the default iface
+# We should set etcd_member_name for etcd cluster. The node that are not etcd members do not need to set the value,
+# or can set the empty string value.
+[kube_control_plane]
+node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd1
+# node2 ansible_host=52.237.213.222  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd2>
+# node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3
+
+[etcd:children]
+kube_control_plane
+
+[kube_node]
+node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4
+# node4 ansible_host=95.54.0.15  # ip=10.3.0.4
+# node5 ansible_host=95.54.0.16  # ip=10.3.0.5
+# node6 ansible_host=95.54.0.17  # ip=10.3.0.6
+                              "
+                        else
+                              echo "Kubespray directory already exists, skipping installation."
+                        fi
+                        EOF
+        """)
+    }
+}
 
 
 // stage('Create resource Azure Terraform') {
@@ -200,32 +220,32 @@ pipeline {
 //     }
 // }
     
-//     stage('Install script in VM'){
-//       steps{
-//         script{
-//           def vm_1_ip = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
-//           def vm_2_ip = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
-//           sshagent(['ssh-agent']) {
-//                         sh """
-//                         ssh -o StrictHostKeyChecking=no adminuser@${vm_ip} << EOF
-//                         if [ ! -d ~/kubespray ]; then
-//                               echo "Cloning kubespray repository..."
-//                               sudo apt update
-//                               sudo apt install -y git python3 python3-pip
-//                               cd ~
-//                               git clone https://github.com/kubernetes-sigs/kubespray.git
-//                               cd kubespray
-//                               pip3 install -r requirements.txt
-//                               cp -r inventory/sample inventory/mycluster
-//                         else
-//                               echo "Kubespray directory already exists, skipping installation."
-//                         fi
-//                         EOF
-//                         """
-//                     }
-//         }
-//       }
-//     }
+    // stage('Install script in VM'){
+    //   steps{
+    //     script{
+    //       def vm_1_ip = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
+    //       def vm_2_ip = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+    //       sshagent(['ssh-agent']) {
+    //                     sh """
+    //                     ssh -o StrictHostKeyChecking=no adminuser@${vm_ip} << EOF
+    //                     if [ ! -d ~/kubespray ]; then
+    //                           echo "Cloning kubespray repository..."
+    //                           sudo apt update
+    //                           sudo apt install -y git python3 python3-pip
+    //                           cd ~
+    //                           git clone https://github.com/kubernetes-sigs/kubespray.git
+    //                           cd kubespray
+    //                           pip3 install -r requirements.txt
+    //                           cp -r inventory/sample inventory/mycluster
+    //                     else
+    //                           echo "Kubespray directory already exists, skipping installation."
+    //                     fi
+    //                     EOF
+    //                     """
+    //                 }
+    //     }
+    //   }
+    // }
 //     stage('Create Deployment YAML') {
 //     steps {
 //         writeFile file: '/home/jenkins/agent/workspace/Pipeline-SavingAccountFE_main/deployment-react.yaml', text: '''apiVersion: apps/v1
