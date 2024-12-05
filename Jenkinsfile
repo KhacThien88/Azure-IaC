@@ -260,14 +260,16 @@ stage('Install Ansible and playbook') {
 
                 echo 'Checking Ansible version...'
                 ansible --version || { echo 'ansible --version failed!'; exit 1; }
-
-                echo 'Running kubespray playbook...'
-                ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml || { echo 'ansible-playbook failed!'; exit 1; }
             """)
         
     }
 }
-    
+stage('Playing book Ansible...'){
+  steps{
+     echo 'Running kubespray playbook...'
+    ansiblePlaybook credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', playbook: '~/kubespray/cluster.yml', vaultTmpPath: ''
+  }
+}  
     // stage('Install script in VM'){
     //   steps{
     //     script{
