@@ -241,28 +241,29 @@ stage('Install ansible and play-book') {
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """
-                set -e  # Exit on any error
+                set -e 
                 echo 'Updating package lists...'
-                sudo apt update -y
+                sudo apt update -y || { echo 'apt update failed!'; exit 1; }
 
                 echo 'Installing software-properties-common...'
-                sudo apt install -y software-properties-common
+                sudo apt install -y software-properties-common || { echo 'apt install failed!'; exit 1; }
 
                 echo 'Adding Ansible PPA...'
-                sudo add-apt-repository ppa:ansible/ansible -y
+                sudo add-apt-repository ppa:ansible/ansible -y || { echo 'add-apt-repository failed!'; exit 1; }
 
                 echo 'Updating package lists again...'
-                sudo apt update -y
+                sudo apt update -y || { echo 'Second apt update failed!'; exit 1; }
 
                 echo 'Installing Ansible...'
-                sudo apt install -y ansible
+                sudo apt install -y ansible || { echo 'apt install ansible failed!'; exit 1; }
 
                 echo 'Checking Ansible version...'
-                ansible --version
+                ansible --version || { echo 'ansible --version failed!'; exit 1; }
 
                 echo 'Running kubespray playbook...'
-                ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml
+                ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml || { echo 'ansible-playbook failed!'; exit 1; }
             """)
+        }
     }
 }
     
