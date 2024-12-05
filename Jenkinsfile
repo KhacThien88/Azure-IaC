@@ -246,7 +246,7 @@ stage('Install requirement') {
     }
 }
 
-stage('Install ansible and play-book') {
+stage('Install Ansible and playbook') {
     steps {
         script {
             vm1.user = 'adminuser'
@@ -273,6 +273,8 @@ stage('Install ansible and play-book') {
 
                 echo 'Checking Ansible version...'
                 ansible --version || { echo 'ansible --version failed!'; exit 1; }
+
+                ls ~/kubespray/playbooks/roles/kubespray-defaults
 
                 echo 'Running kubespray playbook...'
                 ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml || { echo 'ansible-playbook failed!'; exit 1; }
