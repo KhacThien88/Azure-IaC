@@ -167,7 +167,7 @@ pipeline {
             vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
-        sshCommand(remote: remote, command: """
+        sshCommand(remote: vm1, command: """
                         if [ ! -d ~/kubespray ]; then
                               echo "Cloning kubespray repository..."
                               sudo apt update
