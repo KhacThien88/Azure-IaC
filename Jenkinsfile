@@ -261,6 +261,7 @@ stage('Install Ansible and playbook') {
                 echo 'Checking Ansible version...'
                 ansible --version || { echo 'ansible --version failed!'; exit 1; }
             """)
+            ansiblePlaybook limit: '13.75.140.113',credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', become: true,becomeUser: 'root',playbook:'~/kubespray/cluster.yml'
         
     }
 }
@@ -268,7 +269,7 @@ stage('Playing book Ansible...'){
   steps{
     echo 'Running kubespray playbook...'
     sh 'sshpass -V'
-    ansiblePlaybook credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', become: true,becomeUser: 'root',playbook:'~/kubespray/cluster.yml'
+    
   }
 }  
     // stage('Install script in VM'){
