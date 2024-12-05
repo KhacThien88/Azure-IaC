@@ -107,7 +107,7 @@ pipeline {
         }
       }
       steps {
-        sh 'echo Unit Test'
+        sh 'terraform --version'
       }
     }
     stage('Create Resource Terraform in Azure'){
