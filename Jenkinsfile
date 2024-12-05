@@ -322,7 +322,7 @@ spec:
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """ 
-      echo "
+    echo "
 apiVersion: v1
 kind: Service
 metadata:
@@ -351,8 +351,8 @@ spec:
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """ 
-            kubectl apply -f ~/deployment-react.yaml
-            kubectl apply -f ~/service-react.yaml
+            kubectl apply -f ~/deployment.yaml
+            kubectl apply -f ~/service.yaml
             """)
           }
         }
