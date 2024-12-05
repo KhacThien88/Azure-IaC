@@ -122,7 +122,7 @@ pipeline {
         }
       }
     }
-     stage('Get Outputs') {
+     stage('Test Outputs') {
             steps {
                 script {
                     def publicIpVm1 = sh(script: 'terraform output -raw public_ip_vm_1', returnStdout: true).trim()
@@ -159,7 +159,7 @@ pipeline {
     //   }
     // }
     
-    stage('Install Tools') {
+    stage('Install kubespray') {
     steps {
         script {
             vm1.user = 'adminuser'
@@ -174,9 +174,8 @@ pipeline {
                               sudo apt install -y git python3 python3-pip
                               cd ~
                               git clone https://github.com/kubernetes-sigs/kubespray.git
-                              cd kubespray
                               pip3 install -r requirements.txt
-                              cp -r inventory/sample inventory/mycluster
+                              cp -r ~/kubespray/inventory/sample ~/kubespray/inventory/mycluster
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
@@ -199,26 +198,35 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 # node4 ansible_host=95.54.0.15  # ip=10.3.0.4
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
-                              "
+                              " > ~/kubespray/inventory/mycluster/inventory.ini
+
                         else
                               echo "Kubespray directory already exists, skipping installation."
                         fi
-                        EOF
         """)
     }
 }
 
 
-// stage('Create resource Azure Terraform') {
-//     steps {
-//         script {
-//             remote.user = 'root'
-//             remote.password = '111111aA'
-//         }
-//         sshCommand remote: remote, command: 'whoami'
-
-//     }
-// }
+stage('Install ansible and play-book') {
+    steps {
+        script {
+            vm1.user = 'adminuser'
+            vm1.password = '111111aA@'
+            vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
+            vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+        }
+        sshCommand(remote: vm1, command: """
+                sudo apt update -y
+                sudo apt install -y software-properties-common
+                sudo add-apt-repository ppa:ansible/ansible -y
+                sudo apt update -y
+                sudo apt install -y ansible
+                ansible --version
+                ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml
+            """)
+    }
+}
     
     // stage('Install script in VM'){
     //   steps{
