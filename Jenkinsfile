@@ -201,6 +201,30 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
                               " > ~/kubespray/inventory/mycluster/inventory.ini
 
                         else
+                              cp -r ~/kubespray/inventory/sample ~/kubespray/inventory/mycluster
+                              echo "
+# This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
+# and 3 worker nodes
+# See https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html
+# for tips on building your # inventory
+
+# Configure 'ip' variable to bind kubernetes services on a different ip than the default iface
+# We should set etcd_member_name for etcd cluster. The node that are not etcd members do not need to set the value,
+# or can set the empty string value.
+[kube_control_plane]
+node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd1
+# node2 ansible_host=52.237.213.222  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd2>
+# node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3
+
+[etcd:children]
+kube_control_plane
+
+[kube_node]
+node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4
+# node4 ansible_host=95.54.0.15  # ip=10.3.0.4
+# node5 ansible_host=95.54.0.16  # ip=10.3.0.5
+# node6 ansible_host=95.54.0.17  # ip=10.3.0.6
+                              " > ~/kubespray/inventory/mycluster/inventory.ini
                               echo "Kubespray directory already exists, skipping installation."
                         fi
         """)
@@ -217,12 +241,26 @@ stage('Install ansible and play-book') {
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """
+                set -e  # Exit on any error
+                echo 'Updating package lists...'
                 sudo apt update -y
+
+                echo 'Installing software-properties-common...'
                 sudo apt install -y software-properties-common
+
+                echo 'Adding Ansible PPA...'
                 sudo add-apt-repository ppa:ansible/ansible -y
+
+                echo 'Updating package lists again...'
                 sudo apt update -y
+
+                echo 'Installing Ansible...'
                 sudo apt install -y ansible
+
+                echo 'Checking Ansible version...'
                 ansible --version
+
+                echo 'Running kubespray playbook...'
                 ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root ~/kubespray/cluster.yml
             """)
     }
