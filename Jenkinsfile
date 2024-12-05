@@ -267,7 +267,7 @@ stage('Install Ansible and playbook') {
 stage('Playing book Ansible...'){
   steps{
     echo 'Running kubespray playbook...'
-    sshpass -V
+    sh 'sshpass -V'
     ansiblePlaybook credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', become: true,becomeUser: 'root',playbook:'~/kubespray/cluster.yml'
   }
 }  
