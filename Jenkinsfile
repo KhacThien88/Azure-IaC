@@ -174,7 +174,6 @@ pipeline {
                               sudo apt install -y git python3 python3-pip
                               cd ~
                               git clone https://github.com/kubernetes-sigs/kubespray.git
-                              pip3 install -r requirements.txt
                               cp -r ~/kubespray/inventory/sample ~/kubespray/inventory/mycluster
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
@@ -225,13 +224,27 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
                               " > ~/kubespray/inventory/mycluster/inventory.ini
-                              pip3 install -r requirements.txt
                               echo "Kubespray directory already exists, skipping installation."
                         fi
         """)
     }
 }
 
+stage('Install requirement') {
+    steps {
+        script {
+            vm1.user = 'adminuser'
+            vm1.password = '111111aA@'
+            vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
+            vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+        }
+        sshCommand(remote: vm1, command: """
+                pip3 --version
+                pip3 install -r requirements.txt
+            """)
+        
+    }
+}
 
 stage('Install ansible and play-book') {
     steps {
