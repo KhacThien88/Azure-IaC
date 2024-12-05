@@ -240,7 +240,7 @@ stage('Install requirement') {
         }
         sshCommand(remote: vm1, command: """
                 pip3 --version
-                pip3 install -r requirements.txt
+                pip3 install -r ~/kubespray/requirements.txt
             """)
         
     }
