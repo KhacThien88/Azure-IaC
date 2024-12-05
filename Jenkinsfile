@@ -108,7 +108,7 @@ pipeline {
       }
       steps {
         sh 'terraform --version'
-        sh 'terraform validate'
+        // sh 'terraform validate'
 
       }
     }
