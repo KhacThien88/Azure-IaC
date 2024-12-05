@@ -70,21 +70,10 @@ pipeline {
     stage('Check Agent') {
             steps {
                 script {
-                    echo "Running on Kubernetes pod: ${env.POD_NAME}"
                     echo "Running on agent: ${env.NODE_NAME}"
                 }
             }
         }
-    stage('Install Dependencies') {
-    steps {
-        script {
-            sh '''
-            apt-get update
-            apt-get install -y sudo wget gnupg
-            '''
-        }
-    }
-}
     stage('Install Terraform') {
     steps {
         script {
