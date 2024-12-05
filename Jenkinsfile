@@ -59,7 +59,7 @@ pipeline {
 //     }
 //   }
   agent any 
-//   stages {
+  stages {
 //    stage('Setup Terraform') {
 //             steps {
 //                 script {
