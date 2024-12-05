@@ -122,7 +122,17 @@ pipeline {
         }
       }
     }
+     stage('Get Outputs') {
+            steps {
+                script {
+                    def publicIpVm1 = sh(script: 'terraform output -raw public_ip_vm_1', returnStdout: true).trim()
+                    def publicIpVm2 = sh(script: 'terraform output -raw public_ip_vm_2', returnStdout: true).trim()
 
+                    echo "Public IP of VM 1: ${publicIpVm1}"
+                    echo "Public IP of VM 2: ${publicIpVm2}"
+                }
+            }
+        }
    
 
     // stage('Build image') {
