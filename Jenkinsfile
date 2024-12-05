@@ -74,32 +74,32 @@ pipeline {
                 }
             }
         }
-    stage('Install Terraform') {
-    steps {
-        script {
-            sh '''
-            if ! command -v terraform &> /dev/null
-            then
-                echo "Terraform not found, installing..."
-                sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-                wget -O- https://apt.releases.hashicorp.com/gpg | \
-                gpg --dearmor | \
-                sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-                gpg --no-default-keyring \
-                --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-                --fingerprint
-                echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-                https://apt.releases.hashicorp.com \$(lsb_release -cs) main" | \
-                sudo tee /etc/apt/sources.list.d/hashicorp.list
-                sudo apt update
-                sudo apt-get install terraform
-            else
-                echo "Terraform is already installed"
-            fi
-            '''
-        }
-    }
-}
+//     stage('Install Terraform') {
+//     steps {
+//         script {
+//             sh '''
+//             if ! command -v terraform &> /dev/null
+//             then
+//                 echo "Terraform not found, installing..."
+//                 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+//                 wget -O- https://apt.releases.hashicorp.com/gpg | \
+//                 gpg --dearmor | \
+//                 sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+//                 gpg --no-default-keyring \
+//                 --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+//                 --fingerprint
+//                 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+//                 https://apt.releases.hashicorp.com \$(lsb_release -cs) main" | \
+//                 sudo tee /etc/apt/sources.list.d/hashicorp.list
+//                 sudo apt update
+//                 sudo apt-get install terraform
+//             else
+//                 echo "Terraform is already installed"
+//             fi
+//             '''
+//         }
+//     }
+// }
     stage('Unit Test') {
       when {
         expression {
@@ -110,16 +110,15 @@ pipeline {
         sh 'echo Unit Test'
       }
     }
-    // stage('Create Resource Terraform in Azure'){
-    //   steps{
-    //     script{
-    //       sh 'cd /home/jenkins/agent/workspace/Pipeline-SavingAccountFE_main/terraform-azure'
-    //       sh 'terraform init'
-    //       sh 'terraform plan -out main.tfplan'
-    //       sh 'terraform apply main.tfplan'
-    //     }
-    //   }
-    // }
+    stage('Create Resource Terraform in Azure'){
+      steps{
+        withCredentials([azureServicePrincipal('IaC-Azure-Resource')]) {
+          sh 'terraform init'
+          sh 'terraform plan -out main.tfplan'
+          sh 'terraform apply main.tfplan'
+        }
+      }
+    }
 
    
 
