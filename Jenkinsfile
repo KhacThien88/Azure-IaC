@@ -174,6 +174,7 @@ pipeline {
                               sudo apt install -y git python3 python3-pip
                               git clone https://github.com/kubernetes-sigs/kubespray.git 
                               pip3 install -r ~/kubespray/requirements.txt
+                              pip3 install --upgrade cryptography
                               cp -r ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster             
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
@@ -185,7 +186,7 @@ pipeline {
 # We should set etcd_member_name for etcd cluster. The node that are not etcd members do not need to set the value,
 # or can set the empty string value.
 [kube_control_plane]
-node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd1
+node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4 etcd_member_name=etcd1
 # node2 ansible_host=52.237.213.222  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd2>
 # node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3
 
@@ -193,7 +194,7 @@ node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 kube_control_plane
 
 [kube_node]
-node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4
+node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5
 # node4 ansible_host=95.54.0.15  # ip=10.3.0.4
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
@@ -202,6 +203,7 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
                         else
                               cp -r  ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster
                               pip3 install -r ~/kubespray/requirements.txt
+                              pip3 install --upgrade cryptography
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
