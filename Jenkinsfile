@@ -267,7 +267,7 @@ stage('Install Ansible and playbook') {
 stage('Playing book Ansible...'){
   steps{
      echo 'Running kubespray playbook...'
-    ansiblePlaybook credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', playbook: '~/kubespray/cluster.yml', vaultTmpPath: ''
+    ansiblePlaybook credentialsId: 'ssh-credentials', inventory: '~/kubespray/inventory/mycluster/inventory.ini', vaultTmpPath: '' , become: true,becomeUser: 'root',playbook:'~/kubespray/cluster.yml'
   }
 }  
     // stage('Install script in VM'){
