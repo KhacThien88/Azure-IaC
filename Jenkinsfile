@@ -172,8 +172,9 @@ pipeline {
                               echo "Cloning kubespray repository..."
                               sudo apt update
                               sudo apt install -y git python3 python3-pip
-                              git clone https://github.com/kubernetes-sigs/kubespray.git ~
-                              cp -r ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster
+                              git clone https://github.com/kubernetes-sigs/kubespray.git 
+                              pip3 install -r ~/kubespray/requirements.txt
+                              cp -r ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster             
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
@@ -200,6 +201,7 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 
                         else
                               cp -r  ~/kubespray/inventory/sample  ~/kubespray/inventory/mycluster
+                              pip3 install -r ~/kubespray/requirements.txt
                               echo "
 # This inventory describe a HA typology with stacked etcd (== same nodes as control plane)
 # and 3 worker nodes
@@ -226,22 +228,6 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
                               echo "Kubespray directory already exists, skipping installation."
                         fi
         """)
-    }
-}
-
-stage('Install requirement') {
-    steps {
-        script {
-            vm1.user = 'adminuser'
-            vm1.password = '111111aA@'
-            vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
-            vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
-        }
-        sshCommand(remote: vm1, command: """
-                pip3 --version
-                pip3 install -r ~/kubespray/requirements.txt
-            """)
-        
     }
 }
 
