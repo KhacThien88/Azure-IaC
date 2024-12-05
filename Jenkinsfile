@@ -19,46 +19,46 @@ pipeline {
     DOCKERHUB_CREDENTIALS = credentials('dockerhub')
   }
 
-  agent {
-    kubernetes {
-      yaml '''
-      apiVersion: v1
-      kind: Pod
-      spec:
-        serviceAccountName: jenkins-admin
-        dnsConfig:
-          nameservers:
-            - 8.8.8.8
-        containers:
-        - name: docker
-          image: docker:latest
-          imagePullSecrets:
-            - name: regcred
-          command:
-            - cat
-          tty: true
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - mountPath: /var/run/docker.sock
-              name: docker-sock
-        - name: kubectl
-          image: bitnami/kubectl:latest
-          imagePullSecrets:
-            - name: regcred
-          command:
-            - cat
-          securityContext:
-            runAsUser: 0
-          tty: true
-        volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock
-      '''
-    }
-  }
-  
+//   agent {
+//     kubernetes {
+//       yaml '''
+//       apiVersion: v1
+//       kind: Pod
+//       spec:
+//         serviceAccountName: jenkins-admin
+//         dnsConfig:
+//           nameservers:
+//             - 8.8.8.8
+//         containers:
+//         - name: docker
+//           image: docker:latest
+//           imagePullSecrets:
+//             - name: regcred
+//           command:
+//             - cat
+//           tty: true
+//           securityContext:
+//             privileged: true
+//           volumeMounts:
+//             - mountPath: /var/run/docker.sock
+//               name: docker-sock
+//         - name: kubectl
+//           image: bitnami/kubectl:latest
+//           imagePullSecrets:
+//             - name: regcred
+//           command:
+//             - cat
+//           securityContext:
+//             runAsUser: 0
+//           tty: true
+//         volumes:
+//           - name: docker-sock
+//             hostPath:
+//               path: /var/run/docker.sock
+//       '''
+//     }
+//   }
+  agent any 
   stages {
    stage('Setup Terraform') {
             steps {
