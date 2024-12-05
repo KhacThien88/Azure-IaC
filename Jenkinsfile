@@ -59,14 +59,14 @@ pipeline {
 //     }
 //   }
   agent any 
-  stages {
-   stage('Setup Terraform') {
-            steps {
-                script {
-                    writeFile file: 'provider.tf', text: "${env.PROVIDER_TF}"
-                }
-            }
-        }
+//   stages {
+//    stage('Setup Terraform') {
+//             steps {
+//                 script {
+//                     writeFile file: 'provider.tf', text: "${env.PROVIDER_TF}"
+//                 }
+//             }
+//         }
     stage('Check Agent') {
             steps {
                 script {
