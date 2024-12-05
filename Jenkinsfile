@@ -344,18 +344,18 @@ spec:
 
     stage('Deploying App to Kubernetes') {
       steps {
-        container('kubectl') {
-          withCredentials([file(credentialsId: 'kube-config-admin', variable: 'TMPKUBECONFIG')]) {
-            sh "cat \$TMPKUBECONFIG"
-            sh "cp \$TMPKUBECONFIG ~/.kube/config"
-            sh "ls -l \$TMPKUBECONFIG"
-            sh "pwd"
-            sh "kubectl apply -f ~/deployment-react.yaml"
-            sh "kubectl apply -f ~/service-react.yaml"
+        script {
+            vm1.user = 'root'
+            vm1.password = '111111aA@'
+            vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
+            vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+        }
+        sshCommand(remote: vm1, command: """ 
+            kubectl apply -f ~/deployment-react.yaml
+            kubectl apply -f ~/service-react.yaml
+            """)
           }
         }
       }
     }
-}
-}
 
