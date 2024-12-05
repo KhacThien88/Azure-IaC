@@ -108,6 +108,8 @@ pipeline {
       }
       steps {
         sh 'terraform --version'
+        sh 'terraform validate'
+
       }
     }
     stage('Create Resource Terraform in Azure'){
