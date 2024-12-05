@@ -225,6 +225,7 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
                               " > ~/kubespray/inventory/mycluster/inventory.ini
+                              pip3 install -r requirements.txt
                               echo "Kubespray directory already exists, skipping installation."
                         fi
         """)
