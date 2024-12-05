@@ -117,8 +117,8 @@ pipeline {
         withCredentials([azureServicePrincipal(credentialsId:'IaC-Azure-Resource', subscriptionIdVariable: 'SUBS_ID',clientIdVariable: 'CLIENT_ID', clientSecretVariable: 'CLIENT_SECRET', tenantIdVariable: 'TENANT_ID')
 ]) {
           sh 'terraform init'
-          sh 'terraform plan -var='client_id=$CLIENT_ID' -var='client_secret=$CLIENT_ID' -var='subscription_id=$SUBS_ID' -var='tenant_id=$TENANT_ID' -out main.tfplan'
-          sh 'terraform apply -auto-approve -var='client_id=$CLIENT_ID' -var='client_secret=$CLIENT_ID' -var='subscription_id=$SUBS_ID' -var='tenant_id=$TENANT_ID' main.tfplan'
+          sh "terraform plan -var=client_id=${CLIENT_ID} -var=client_secret=${CLIENT_SECRET} -var=subscription_id=${SUBS_ID} -var=tenant_id=${TENANT_ID} -out main.tfplan"
+          sh "terraform apply -var=client_id=${CLIENT_ID} -var=client_secret=${CLIENT_SECRET} -var=subscription_id=${SUBS_ID} -var=tenant_id=${TENANT_ID} main.tfplan"
         }
       }
     }
