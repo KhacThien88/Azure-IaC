@@ -278,7 +278,7 @@ stage('Install Ansible and playbook') {
         }
      sshCommand(remote: vm1, command: """ 
      kubectl create namespace devops-tools       
-     echo"   
+     echo "   
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -322,7 +322,7 @@ spec:
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """ 
-      echo"
+      echo "
 apiVersion: v1
 kind: Service
 metadata:
