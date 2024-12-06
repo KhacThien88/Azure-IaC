@@ -114,4 +114,26 @@ security_rule {
   source_address_prefix     = "*"
   destination_address_prefix = "*"
 }
+security_rule {
+  name                       = "Allow-SavingAccountFEIn"
+  priority                   = 160
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                  = "Tcp"
+  source_port_range         = "*"
+  destination_port_range    = "32100"
+  source_address_prefix     = "*"
+  destination_address_prefix = "*"
+}
+security_rule {
+  name                       = "Allow-SavingAccountFEOut"
+  priority                   = 170
+  direction                  = "Outbound"
+  access                     = "Allow"
+  protocol                  = "Tcp"
+  source_port_range         = "*"
+  destination_port_range    = "32100"
+  source_address_prefix     = "*"
+  destination_address_prefix = "*"
+}
 }
