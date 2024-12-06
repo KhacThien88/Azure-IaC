@@ -299,7 +299,7 @@ spec:
       - name: savingaccountfe
         image: ktei8htop15122004/savingaccountfe:latest
         ports:
-        - containerPort: 81
+        - containerPort: 80
         resources:
           requests:
             memory: "128Mi"
