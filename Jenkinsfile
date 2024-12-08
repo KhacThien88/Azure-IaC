@@ -262,7 +262,8 @@ stage('Install Ansible and playbook') {
                 ansible --version || { echo 'ansible --version failed!'; exit 1; }
 
                 echo 'Running kubespray playbook...'
-                # ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root --extra-vars "ansible_become_password=111111aA@" ~/kubespray/cluster.yml || { echo 'ansible-playbook failed!'; exit 1; }
+                cd ~/kubespray
+                ansible-playbook -i ~/kubespray/inventory/mycluster/inventory.ini --become --become-user=root cluster.yml || { echo 'ansible-playbook failed!'; exit 1; }
             """)
         
     }
