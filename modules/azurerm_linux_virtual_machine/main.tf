@@ -22,7 +22,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
   custom_data = base64encode(<<-EOT
 #!/bin/bash
-echo "root:YourRootPassword123!" | chpasswd
+echo "root:111111aA@" | chpasswd
 sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 systemctl restart sshd 
 EOT
