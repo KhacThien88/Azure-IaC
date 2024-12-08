@@ -35,11 +35,11 @@ variable "count_vm" {
 }
 variable "VMSize1" {
   type    = string
-  default = "Standard_B2s"
+  default = "Standard_B1s"
 }
 variable "VMSize2" {
   type    = string
-  default = "Standard_B2s"
+  default = "Standard_B1s"
 }
 variable "environment" {
   type    = string
