@@ -16,3 +16,9 @@ output "public_ip_vm_1" {
 output "public_ip_vm_2" {
   value = module.azure_public_ip_2.public_ip
 }
+output "private_ip_address_vm_1" {
+  value = module.azurerm_network_interface_1.private_ip_address
+}
+output "private_ip_address_vm_2" {
+  value = module.azurerm_network_interface_2.private_ip_address
+}
