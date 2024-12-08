@@ -11,6 +11,9 @@ def vm2=[:]
 vm2.name = 'vm2'
 vm2.allowAnyHosts = true
 
+def private_ip_1 = ''
+def private_ip_2 = ''
+
 pipeline {
   environment {
     PROVIDER_TF = credentials('provider-azure')
@@ -166,6 +169,8 @@ pipeline {
             vm1.password = '111111aA@'
             vm1.host = sh(script: "terraform output -raw public_ip_vm_1", returnStdout: true).trim()
             vm2.host = sh(script: "terraform output -raw public_ip_vm_2", returnStdout: true).trim()
+            private_ip_1 = sh(script: "terraform output -raw private_ip_address_vm_1", returnStdout: true).trim()
+            private_ip_2 = sh(script: "terraform output -raw private_ip_address_vm_2", returnStdout: true).trim()
         }
         sshCommand(remote: vm1, command: """
                         if [ ! -d ~/kubespray ]; then
@@ -186,7 +191,7 @@ pipeline {
 # We should set etcd_member_name for etcd cluster. The node that are not etcd members do not need to set the value,
 # or can set the empty string value.
 [kube_control_plane]
-node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4 etcd_member_name=etcd1
+node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=${private_ip_1} etcd_member_name=etcd1
 # node2 ansible_host=52.237.213.222  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd2>
 # node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3
 
@@ -194,7 +199,7 @@ node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 kube_control_plane
 
 [kube_node]
-node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5
+node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=${private_ip_2}
 # node4 ansible_host=95.54.0.15  # ip=10.3.0.4
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
@@ -214,7 +219,7 @@ node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 # We should set etcd_member_name for etcd cluster. The node that are not etcd members do not need to set the value,
 # or can set the empty string value.
 [kube_control_plane]
-node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd1
+node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=${private_ip_1} etcd_member_name=etcd1
 # node2 ansible_host=52.237.213.222  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.5 etcd_member_name=etcd2>
 # node3 ansible_host=95.54.0.14  # ip=10.3.0.3 etcd_member_name=etcd3
 
@@ -222,7 +227,7 @@ node1 ansible_host=${vm1.host}  ansible_user=adminuser ansible_ssh_pass=111111aA
 kube_control_plane
 
 [kube_node]
-node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=10.0.1.4
+node2 ansible_host=${vm2.host}  ansible_user=adminuser ansible_ssh_pass=111111aA@ ip=${private_ip_2}
 # node4 ansible_host=95.54.0.15  # ip=10.3.0.4
 # node5 ansible_host=95.54.0.16  # ip=10.3.0.5
 # node6 ansible_host=95.54.0.17  # ip=10.3.0.6
