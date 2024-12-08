@@ -20,12 +20,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "22_04-lts"
     version   = "latest"
   }
-  custom_data = <<-EOT
+  custom_data = base64encode(<<-EOT
 #!/bin/bash
-echo "root:111111aA@!" | chpasswd
+echo "root:YourRootPassword123!" | chpasswd
 sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 systemctl restart sshd 
 EOT
+)
   tags = {
     environment = var.environment
   }
