@@ -39,7 +39,7 @@ variable "VMSize1" {
 }
 variable "VMSize2" {
   type    = string
-  default = "Standard_B1s"
+  default = "Standard_B2s"
 }
 variable "environment" {
   type    = string
