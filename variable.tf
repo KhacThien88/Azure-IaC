@@ -1,12 +1,12 @@
 variable "name" {
   type        = string
   description = "The name of the resource group"
-  default     = "rg_linuxhcmusdemo"
+  default     = "rg_clusterk8s"
 }
 variable "location" {
   type        = string
   description = "The name of region of VM hosting"
-  default     = "australiaeast"
+  default     = "australiasoutheast"
 }
 variable "tags" {
   type        = map(string)
@@ -33,9 +33,13 @@ variable "count_vm" {
   type    = number
   default = 2
 }
-variable "VMSize" {
+variable "VMSize1" {
   type    = string
-  default = "Standard_B4ms"
+  default = "Standard_B2s"
+}
+variable "VMSize2" {
+  type    = string
+  default = "Standard_B2s"
 }
 variable "environment" {
   type    = string

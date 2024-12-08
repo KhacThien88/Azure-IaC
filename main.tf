@@ -92,7 +92,7 @@ module "azurerm_linux_virtual_machine_1" {
   name_vm     = var.name_vm[0]
   count_vm    = var.count_vm
   location    = var.location
-  VMSize      = var.VMSize
+  VMSize      = var.VMSize1
   name_rg     = module.resources_group.name
   source      = "./modules/azurerm_linux_virtual_machine"
   environment = "development"
@@ -103,7 +103,7 @@ module "azurerm_linux_virtual_machine_2" {
   name_vm     = var.name_vm[1]
   count_vm    = var.count_vm
   location    = var.location
-  VMSize      = var.VMSize
+  VMSize      = var.VMSize2
   name_rg     = module.resources_group.name
   source      = "./modules/azurerm_linux_virtual_machine"
   environment = "development"

@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "tf_state" {
-  name = "tfstorage15122004"
+  name = "tfstoragesoutheast"
   location = var.location
   resource_group_name = var.name_rg
   account_tier = "Standard"
